@@ -1,0 +1,24 @@
+server:
+  port: 8500
+
+target:
+  api: host.docker.internal:9140
+
+spring:
+  application:
+    name: project-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+    url: jdbc:postgresql://host.docker.internal:5432/project-service
+  jpa:
+    database-platform : org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      show_sql: true
+      format_sql: true
+      use_sql_comments: false
+      type: all
+      disableConnectionTracking: true
