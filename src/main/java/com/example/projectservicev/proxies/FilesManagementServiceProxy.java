@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @FeignClient(name = "files-management-service", url = "localhost:9140/api/v1/files", configuration = FeignClientConfiguration.class)
-public interface FilesManagementServiceProxy {
+public interface filesManagmentServiceProxy {
 
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     ResponseEntity upload(@RequestPart("file") MultipartFile file,

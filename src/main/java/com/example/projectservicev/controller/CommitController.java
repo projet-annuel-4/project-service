@@ -3,7 +3,7 @@ package com.example.projectservicev.controller;
 import com.example.projectservicev.domain.model.Commit;
 import com.example.projectservicev.dto.UploadFileToServerRequest;
 import com.example.projectservicev.mapper.CommitMapper;
-import com.example.projectservicev.proxies.FilesManagementServiceProxy;
+import com.example.projectservicev.proxies.filesManagmentServiceProxy;
 import com.example.projectservicev.request.CreateCommitRequest;
 import com.example.projectservicev.service.DeltaService;
 import com.google.gson.Gson;
@@ -50,15 +50,15 @@ public class CommitController {
 
     private final CommitMapper commitMapper;
     private final DeltaService deltaService;
-    private final FilesManagementServiceProxy filesManagementServiceProxy;
+    private final filesManagmentServiceProxy filesManagmentServiceProxy;
 
 
     @Autowired
-    public CommitController(CommitMapper commitMapper, DeltaService deltaService, FilesManagementServiceProxy filesManagementServiceProxy) {
+    public CommitController(CommitMapper commitMapper, DeltaService deltaService, filesManagmentServiceProxy filesManagmentServiceProxy) {
         //  delta service for test
         this.commitMapper = commitMapper;
         this.deltaService = deltaService;
-        this.filesManagementServiceProxy = filesManagementServiceProxy;
+        this.filesManagmentServiceProxy = filesManagmentServiceProxy;
     }
 
     @PostMapping("")
@@ -148,7 +148,7 @@ public class CommitController {
         System.out.println(responseBody.body());
 
 
-        //filesManagementServiceProxy.upload(multipartFile, request2);
+        //filesManagmentServiceProxy.upload(multipartFile, request2);
 
 
     }
