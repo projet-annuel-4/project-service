@@ -1,22 +1,31 @@
-FROM maven:3.8.5-eclipse-temurin-17-alpine AS build
-WORKDIR /home/app
-COPY pom.xml .
-RUN mvn clean
-COPY src ./src
-RUN ["mvn", "package", "-Dmaven.test.skip=true"]
+#stage 1
+#Start with a base image containing Java runtime
+FROM openjdk:11-slim as build
 
-FROM openjdk:19-slim
+# Add Maintainer Info
+LABEL maintainer="HLimam <heithem.limame@gmail.com>"
 
-RUN apt-get update
-RUN apt-get -y install nano
-RUN apt-get -y install patch
-#COPY . .
-COPY --from=build /home/app/target/*.jar /usr/local/lib/build.jar
-EXPOSE 8500
+# The application's jar file
+#ARG JAR_FILE
 
-ENTRYPOINT ["java","-jar","/usr/local/lib/build.jar"]
+# Add the application's jar to the container
+COPY target/*.jar app.jar
 
+#unpackage jar file
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf /app.jar)
 
-# docker build -t project_service_test .  */
-# docker run -d -p 8500:8500 --network=host --name project_service project_service_test */
-# docker run -d -p 8500:8500 --name project_service project_service_test */
+#stage 2
+#Same Java runtime
+FROM openjdk:11-slim
+
+#Add volume pointing to /tmp
+VOLUME /tmp
+
+#Copy unpackaged application to new container
+ARG DEPENDENCY=/target/dependency
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
+#execute the application
+ENTRYPOINT ["java","-cp","app:app/lib/*","ProjectServiceApplication"]
