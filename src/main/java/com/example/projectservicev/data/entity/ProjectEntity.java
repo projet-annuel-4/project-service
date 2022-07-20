@@ -16,8 +16,7 @@ public class ProjectEntity {
     @Temporal(TemporalType.DATE)
     private Date creationDate;
     private boolean visibility;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "groups_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private GroupEntity groupEntity;
 
     public ProjectEntity(Long id, String name, Date creationDate, boolean visibility, GroupEntity groupEntity) {

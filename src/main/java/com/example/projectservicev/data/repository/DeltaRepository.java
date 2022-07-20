@@ -15,5 +15,6 @@ public interface DeltaRepository extends JpaRepository<DeltaEntity, Long> {
 
     void deleteAllByFormCommitEntity(CommitEntity commitEntity);
 
+    DeltaEntity getByFileSrc_IdAndAndFormCommitEntity_Id(Long fileId, Long commitId);
 
 }

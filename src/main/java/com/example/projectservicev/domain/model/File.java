@@ -15,12 +15,13 @@ public class File {
     private Commit commitCreation;
     private Branch branch;
     private boolean fromInit;
+    private boolean deleted;
 
     public File(){
 
     }
 
-    public File(Long id, String name, boolean type, String url, MultipartFile file, File parentDirectory, String lastCommitName, Commit commitCreation, Branch branch, boolean fromInit) {
+    public File(Long id, String name, boolean type, String url, MultipartFile file, File parentDirectory, String lastCommitName, Commit commitCreation, Branch branch, boolean fromInit, boolean deleted) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -31,6 +32,15 @@ public class File {
         this.commitCreation = commitCreation;
         this.branch = branch;
         this.fromInit = fromInit;
+        this.deleted = deleted;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setId(Long id) {

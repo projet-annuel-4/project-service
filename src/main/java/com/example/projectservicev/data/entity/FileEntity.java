@@ -12,19 +12,20 @@ public class FileEntity {
     private String name;
     private boolean type;
     private String url;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private FileEntity parentDirectory;
     private String lastCommitName;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity commitEntityCreation;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private BranchEntity branchEntity;
     private boolean fromInit;
+    private boolean deleted;
 
     public FileEntity() {
     }
 
-    public FileEntity(Long id, String name, boolean type, String url, FileEntity parentDirectory, String lastCommitName, CommitEntity commitEntityCreation, BranchEntity branchEntity, boolean fromInit) {
+    public FileEntity(Long id, String name, boolean type, String url, FileEntity parentDirectory, String lastCommitName, CommitEntity commitEntityCreation, BranchEntity branchEntity, boolean fromInit, boolean deleted) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -34,6 +35,31 @@ public class FileEntity {
         this.commitEntityCreation = commitEntityCreation;
         this.branchEntity = branchEntity;
         this.fromInit = fromInit;
+        this.deleted = deleted;
+    }
+
+    public CommitEntity getCommitEntityCreation() {
+        return commitEntityCreation;
+    }
+
+    public void setCommitEntityCreation(CommitEntity commitEntityCreation) {
+        this.commitEntityCreation = commitEntityCreation;
+    }
+
+    public BranchEntity getBranchEntity() {
+        return branchEntity;
+    }
+
+    public void setBranchEntity(BranchEntity branchEntity) {
+        this.branchEntity = branchEntity;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public BranchEntity getBranch() {
@@ -106,5 +132,20 @@ public class FileEntity {
 
     public CommitEntity getCommitCreation() {
         return commitEntityCreation;
+    }
+
+    @Override
+    public String toString() {
+        return "FileEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", url='" + url + '\'' +
+                ", parentDirectory=" + parentDirectory +
+                ", lastCommitName='" + lastCommitName + '\'' +
+                ", commitEntityCreation=" + commitEntityCreation +
+                ", branchEntity=" + branchEntity +
+                ", fromInit=" + fromInit +
+                '}';
     }
 }

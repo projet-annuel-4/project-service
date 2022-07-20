@@ -63,7 +63,7 @@ public class CommitController {
 
     @PostMapping("")
     public void createCommit(@RequestBody CreateCommitRequest request,
-                              @PathVariable("idBranch") Long idBranch) throws IOException {
+                              @PathVariable("idBranch") Long idBranch) throws IOException, URISyntaxException, InterruptedException {
         commitMapper.createCommit(idBranch, request);
 
     }
@@ -76,6 +76,11 @@ public class CommitController {
     @PostMapping("/{idCommit}/delete")
     public void deleteCommit(@PathVariable("id") Long idCommit){
         commitMapper.deleteCommit(idCommit);
+    }
+
+    @PostMapping("/{commitId}/revert")
+    public void revertCommit(@PathVariable("idBranch") Long branchId, @PathVariable("commitId") Long commitId) throws IOException, URISyntaxException, InterruptedException {
+        commitMapper.revertCommit(branchId, commitId);
     }
 
     @PostMapping("/test")
@@ -144,9 +149,6 @@ public class CommitController {
                 .POST(java.net.http.HttpRequest.BodyPublishers.ofInputStream(() -> Channels.newInputStream(pipe.source()))).build();
 
         HttpResponse<String> responseBody = httpClient.send(request2, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
-        System.out.println(responseBody.body());
-
 
         //filesManagementServiceProxy.upload(multipartFile, request2);
 

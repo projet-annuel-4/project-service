@@ -4,50 +4,71 @@ package com.example.projectservicev.domain.model;
 public class ModifiedFile {
 
     private Long id;
-    private File fileEntity;
-    private Branch branchEntity;
+    private File file;
+    private Branch branch;
     private ModifiedFileTypeEnum modificationType;
+    private Commit attachedCommit;
 
 
     public ModifiedFile() {
     }
 
-    public ModifiedFile(Long id, File fileEntity, Branch branchEntity, ModifiedFileTypeEnum modicationType) {
+    public ModifiedFile(Long id, File file, Branch branch, ModifiedFileTypeEnum modificationType, Commit attachedCommit) {
         this.id = id;
-        this.fileEntity = fileEntity;
-        this.branchEntity = branchEntity;
-        this.modificationType = modicationType;
-    }
-
-    public void setModificationType(ModifiedFileTypeEnum modificationType) {
+        this.file = file;
+        this.branch = branch;
         this.modificationType = modificationType;
-    }
-
-    public ModifiedFileTypeEnum getModificationType() {
-        return modificationType;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFileEntity(File fileEntity) {
-        this.fileEntity = fileEntity;
-    }
-
-    public void setBranchEntity(Branch branchEntity) {
-        this.branchEntity = branchEntity;
+        this.attachedCommit = attachedCommit;
     }
 
     public Long getId() {
         return id;
     }
 
-    public File getFileEntity() {
-        return fileEntity;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Branch getBranchEntity() {
-        return branchEntity;
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
+    public ModifiedFileTypeEnum getModificationType() {
+        return modificationType;
+    }
+
+    public void setModificationType(ModifiedFileTypeEnum modificationType) {
+        this.modificationType = modificationType;
+    }
+
+    public Commit getAttachedCommit() {
+        return attachedCommit;
+    }
+
+    public void setAttachedCommit(Commit attachedCommit) {
+        this.attachedCommit = attachedCommit;
+    }
+
+    @Override
+    public String toString() {
+        return "ModifiedFile{" +
+                "id=" + id +
+                ", file=" + file +
+                ", branch=" + branch.toString() +
+                ", modificationType=" + modificationType +
+                ", attachedCommit=" + attachedCommit +
+                '}';
     }
 }

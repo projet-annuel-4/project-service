@@ -62,4 +62,16 @@ public class Commit {
     public Branch getBranch() {
         return branch;
     }
+
+    @Override
+    public String toString() {
+        return "Commit{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", creationDate=" + creationDate +
+                ", parent=" + parent +
+                ", child=" + child +
+                ", branch=" + branch +
+                '}';
+    }
 }

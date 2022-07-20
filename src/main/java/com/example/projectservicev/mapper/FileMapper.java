@@ -1,10 +1,16 @@
 package com.example.projectservicev.mapper;
 
 import com.example.projectservicev.domain.model.File;
+import com.example.projectservicev.dto.FileFromDownloadService;
 import com.example.projectservicev.service.FileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Component
 public class FileMapper {
@@ -18,7 +24,19 @@ public class FileMapper {
         this.fileService = fileService;
     }
 
-    public void saveFile(Long idBranch, File fileToSave){
+    public File saveFile(Long idBranch, Long fileId, MultipartFile fileToSave) throws IOException, URISyntaxException, InterruptedException {
+        return fileService.saveFile(idBranch, fileId, fileToSave);
+    }
 
+    public File createFile(Long branchId, MultipartFile fileToCreate) throws IOException, URISyntaxException, InterruptedException {
+        return fileService.createFile(branchId, fileToCreate);
+    }
+
+    public File deleteFile(Long branchId, Long fileId){
+        return fileService.deleteFileById(branchId, fileId);
+    }
+
+    public byte[] getFile(Long fileId, String type) throws ChangeSetPersister.NotFoundException, IOException, URISyntaxException, InterruptedException {
+        return fileService.getFileOnServerById(fileId, type);
     }
 }

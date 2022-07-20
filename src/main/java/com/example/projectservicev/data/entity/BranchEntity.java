@@ -13,8 +13,7 @@ public class BranchEntity {
     private String name;
     @Temporal(TemporalType.DATE)
     private Date creationDate;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "project_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProjectEntity projectEntity;
 
     public BranchEntity(Long id, String name, Date creationDate, ProjectEntity projectEntity) {

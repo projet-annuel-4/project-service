@@ -28,7 +28,6 @@ public class BranchMapper {
     }
 
     public void initBranch(Long idBranch, MultipartFile[] files) throws IOException, URISyntaxException, InterruptedException {
-        System.out.println("mapper");
 
         branchService.initBranch(idBranch, files);
 

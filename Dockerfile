@@ -10,6 +10,10 @@ FROM openjdk:19-slim
 RUN apt-get update
 RUN apt-get -y install nano
 RUN apt-get -y install patch
+RUN apt-get -y install dos2unix
+RUN mkdir "tmpFilesConvert"
+RUN mkdir "tmpDelta"
+
 #COPY . .
 COPY --from=build /home/app/target/*.jar /usr/local/lib/build.jar
 EXPOSE 8500
@@ -20,3 +24,4 @@ ENTRYPOINT ["java","-jar","/usr/local/lib/build.jar"]
 # docker build -t project_service_test .  */
 # docker run -d -p 8500:8500 --network=host --name project_service project_service_test */
 # docker run -d -p 8500:8500 --name project_service project_service_test */
+

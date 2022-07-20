@@ -30,7 +30,9 @@ public class ProjectDomainMapper {
     }
 
     public Project convertEntityToModel(ProjectEntity projectEntity){
-        System.out.println(projectEntity.toString());
+        if ( projectEntity == null){
+            return null;
+        }
         return new Project(
                 projectEntity.getId(),
                 projectEntity.getName(),
@@ -41,6 +43,15 @@ public class ProjectDomainMapper {
     }
 
     public ProjectEntity convertModelToEntity(Project project){
+        if ( project == null){
+            return null;
+        }
+        ProjectEntity projectEntity = new ProjectEntity();
+        projectEntity.setId(project.getId());
+        projectEntity.setGroupEntity(groupDomainMapper.convertModelToEntity(project.getGroup()));
+        projectEntity.setName(project.getName());
+        projectEntity.setCreationDate(project.getCreationDate());
+        projectEntity.setVisibility(project.getVisibility());
         return modelMapper.map(project, ProjectEntity.class);
     }
 

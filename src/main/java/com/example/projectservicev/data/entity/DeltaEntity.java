@@ -1,20 +1,18 @@
 package com.example.projectservicev.data.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "delta")
 public class DeltaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "delta_id_seq")
     private Long id;
     private String patchUrl;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private FileEntity fileSrc;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity formCommitEntity;
 
     public DeltaEntity(Long id, String patchUrl, FileEntity fileSrc, CommitEntity formCommitEntity) {

@@ -15,7 +15,7 @@ public interface CommitRepository extends JpaRepository<CommitEntity, Long> {
 
     List<CommitEntity> findAllByBranchEntityId(Long idBranch);
 
-
+    CommitEntity findByChild_Id(Long childId);
 
 
 }

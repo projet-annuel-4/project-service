@@ -14,5 +14,5 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
     List<FileEntity> findAllByCommitEntityCreation(CommitEntity commitEntity);
 
-
+    FileEntity findByIdAndBranchEntity_Id(Long id, Long branchId);
 }

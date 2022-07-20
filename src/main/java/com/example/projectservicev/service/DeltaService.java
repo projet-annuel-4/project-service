@@ -7,11 +7,10 @@ import com.example.projectservicev.domain.mapper.DeltaDomainMapper;
 import com.example.projectservicev.domain.model.Commit;
 import com.example.projectservicev.domain.model.Delta;
 import com.example.projectservicev.domain.model.File;
-import com.example.projectservicev.dto.FileFromDownloadService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,72 +21,128 @@ public class DeltaService {
     private final DeltaRepository deltaRepository;
     private final DeltaDomainMapper deltaDomainMapper;
     private final CommitDomainMapper commitDomainMapper;
+    private final StorageService storageService;
 
-    @Autowired
-    public DeltaService(DeltaRepository deltaRepository, DeltaDomainMapper deltaDomainMapper, CommitDomainMapper commitDomainMapper) {
+    public DeltaService(DeltaRepository deltaRepository, DeltaDomainMapper deltaDomainMapper, CommitDomainMapper commitDomainMapper, StorageService storageService) {
         this.deltaRepository = deltaRepository;
         this.deltaDomainMapper = deltaDomainMapper;
         this.commitDomainMapper = commitDomainMapper;
+        this.storageService = storageService;
     }
 
-    public void createDelta(Long idBranch, Commit commit, File fileToCommit) throws IOException {
+    public void createDelta(Long idBranch, Commit commit, File fileToCommit) throws IOException, URISyntaxException, InterruptedException {
         // recup les fichiers ici et executé les cmdd
         //generatePatch(idBranch, fileToCommit.getId(), commit.getId());
         Delta deltaToSave = new Delta();
-        deltaToSave.setPatchUrl(generatePatch(idBranch, fileToCommit.getId(), commit.getId()));
+        String directoryPath =  "/tmpDelta/" + idBranch.toString() + "/" ;
+        java.io.File patch = generatePatch(directoryPath, fileToCommit.getId(), commit.getId());
+        deltaToSave.setPatchUrl("null");
         deltaToSave.setFileSrc(fileToCommit);
         deltaToSave.setFormCommit(commit);
-        deltaRepository.save(deltaDomainMapper.convertModelToEntity(deltaToSave));
+        DeltaEntity deltaSaved = deltaRepository.save(deltaDomainMapper.convertModelToEntity(deltaToSave));
+        storageService.saveDelta(idBranch, deltaDomainMapper.convertEntityToModel(deltaSaved), patch);
+        // get patch file and send it to server with delta id + delete directory
     }
 
-    public String generatePatch(Long idBranch, Long idFileToCommit, Long idCommit) throws IOException {
+    public Delta getDeltaByFileIdAndCommitId(Long fileId, Long commitId){
+        return deltaDomainMapper.convertEntityToModel(deltaRepository.getByFileSrc_IdAndAndFormCommitEntity_Id(fileId,commitId));
+    }
+
+    public void revertDelta(Long idBranch, Commit commit, File fileToRevert) throws IOException, URISyntaxException, InterruptedException {
+
+        Delta deltaToRevert = getDeltaByFileIdAndCommitId(fileToRevert.getId(), commit.getId());
+        System.out.println("delta : " + deltaToRevert);
+        String directoryPath =  "/tmpDelta/" + idBranch.toString() + "/" ;
+        java.io.File tmpDir = new java.io.File(directoryPath);
+        if( !tmpDir.mkdir()){
+            throw  new RuntimeException("unable to create dir");
+        }
+        java.io.File fileReverted = revertPatch(directoryPath, fileToRevert.getId(), deltaToRevert.getId());
+
+        deltaRepository.delete(deltaDomainMapper.convertModelToEntity(deltaToRevert));
+        storageService.saveFileReverted(fileToRevert.getBranch().getId(), fileToRevert, fileReverted);
+        tmpDir.delete();
+        // get patch file and send it to server with delta id + delete directory
+    }
+
+    public void setupFilesToProcessDirectoryRevert(String directoryPath, Long fileToCommitId, Long patchToRevertId) throws IOException, URISyntaxException, InterruptedException {
+        // create paths
+        byte[] actualFile = storageService.getFileOnServerTest(fileToCommitId, "actual");
+        byte[] patchFile = storageService.getFileOnServerTest(patchToRevertId, "patch");
+        System.out.println("size actual : " + actualFile.length);
+        System.out.println("size patchFile : " + patchFile.length);
+        java.io.File tmpActualFile = new java.io.File(directoryPath + "actual_" + fileToCommitId.toString() + ".txt");
+        java.io.File tmpPatchFile = new java.io.File(directoryPath + "patch_" + patchToRevertId.toString() + ".patch");
+
+
+        try (
+                OutputStream actualFileCreated = new FileOutputStream(tmpActualFile);
+                OutputStream patchFileCreated = new FileOutputStream(tmpPatchFile);
+        ){
+            actualFileCreated.write(actualFile);
+            actualFileCreated.close();
+            patchFileCreated.write(patchFile);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public java.io.File revertPatch(String directoryPath, Long fileToCommitId, Long deltaId) throws IOException, URISyntaxException, InterruptedException {
         // get last_commit file and actual file
-        String directoryPath =  idBranch.toString();
-        //setupFilesToProcessDirectory(directoryPath, idFileToCommit);
 
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        //processBuilder.directory(new java.io.File(directoryPath));
-        String command = "diff /123/last_commit_" +idFileToCommit+ ".txt /123/actual_" +idFileToCommit+ ".txt > /123/patch.patch";
-        //String command = "ls";
-        processBuilder.command(command);
-
-        java.io.File f = new java.io.File("/123");
-        f.mkdir();
-        java.io.File fl = new java.io.File("/123/last_commit_1.txt");
-        java.io.File fa = new java.io.File("/123/actual_1.txt");
-        fl.createNewFile();
-        fa.createNewFile();
-        java.io.File fp = new java.io.File("/123/patch.patch");
-        fp.createNewFile();
-        FileWriter myWriter = new FileWriter("/123/last_commit_1.txt");
-        myWriter.write("test 123");
-        myWriter.close();
-        FileWriter myWriter2 = new FileWriter("/123/actual_1.txt");
-        myWriter2.write("test 1234586");
-        myWriter2.close();
-        //diff -u /123/last_commit_1.txt /123/actual_1.txt > /123/patch.patch
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
-        String[] command1 = new String[]{"diff","/123/last_commit_1.txt","/123/actual_1.txt",">","/123/patch.patch"};
-        String copy = "";
+        setupFilesToProcessDirectoryRevert(directoryPath, fileToCommitId, deltaId);
+        //TODO add extension in file to build file here
+        System.out.println("//// PROCESS RESULT ////");
         try {
-            System.out.println("zeafzerfgjzçieojfoizejfiojzefio");
+            Process process1 = Runtime.getRuntime()
+                    .exec("dos2unix "+ directoryPath + "actual_" +fileToCommitId+ ".txt ");
             Process process = Runtime.getRuntime()
-                    .exec("diff /123/last_commit_1.txt /123/actual_1.txt");
+                    .exec("patch -R "+ directoryPath + "actual_" +fileToCommitId+ ".txt " + directoryPath + "patch_" +deltaId+ ".patch");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = "";
 
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
+            }
+        } catch (Exception e){
+            throw new RuntimeException(" UNABLE TO PATCH FILE ");
+        }
+        System.out.println("//// PROCESS END ////");
+        java.io.File actualFile = new java.io.File(directoryPath + "actual_" +fileToCommitId+ ".txt");
+        java.io.File patchFile = new java.io.File(directoryPath + "patch_" +deltaId+ ".patch");
+        //TODO delete patch on server
+        patchFile.delete();
+
+        return actualFile;
+    }
+
+    public java.io.File generatePatch(String directoryPath, Long fileToCommitId, Long idCommit) throws IOException, URISyntaxException, InterruptedException {
+        // get last_commit file and actual file
+
+        setupFilesToProcessDirectory(directoryPath, fileToCommitId);
+        //TODO add extension in file to build file here
+        String copy = "";
+        try {
+            Process process = Runtime.getRuntime()
+                    .exec("diff "+ directoryPath + "last_" +fileToCommitId+ ".txt " + directoryPath + "actual_" +fileToCommitId+ ".txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = "";
+
+            while ((line = reader.readLine()) != null) {
                 copy += line +"\n";
             }
         } catch (Exception e){
 
         }
 
-        java.io.File createdPatch = createPatchFile("/123", copy);
-        String patchPathServer = idCommit.toString() + "-" + idFileToCommit.toString();
+        java.io.File createdPatch = createPatchFile(directoryPath , copy);
+        java.io.File lastFile = new java.io.File(directoryPath + "last_" +fileToCommitId+ ".txt");
+        java.io.File actualFile = new java.io.File(directoryPath + "actual_" +fileToCommitId+ ".txt");
+        lastFile.delete();
+        actualFile.delete();
+//        String patchPathServer = idCommit.toString() + "-" + fileToCommitId.toString();
         //save on the server return url of stocked path
-        return patchPathServer;
+        return createdPatch;
     }
 
     private java.io.File createPatchFile(String directoryPath, String copy) throws IOException {
@@ -98,17 +153,21 @@ public class DeltaService {
         return new java.io.File(filePath);
     }
 
-    private void setupFilesToProcessDirectory(String directoryPath, Long idFileToCommit){
+    public void setupFilesToProcessDirectory(String directoryPath, Long fileToCommitId) throws IOException, URISyntaxException, InterruptedException {
         // create paths
-        FileFromDownloadService lastCommitFile = new FileFromDownloadService();// call the download service
-        FileFromDownloadService actualFile = new FileFromDownloadService();// call the download service
+        byte[] actualFile = storageService.getFileOnServerTest(fileToCommitId, "actual");
+        byte[] lastCommitFile = storageService.getFileOnServerTest(fileToCommitId, "last");
+        java.io.File tmpActualFile = new java.io.File(directoryPath + "actual_" + fileToCommitId.toString() + ".txt");
+        java.io.File tmpLastCommitFile = new java.io.File(directoryPath + "last_" + fileToCommitId.toString() + ".txt");
+
 
         try (
-             FileOutputStream lastCommitFileCreated = new FileOutputStream(directoryPath+"last_commit_"+idFileToCommit.toString());
-             FileOutputStream actualFileCreated = new FileOutputStream(directoryPath+"actual_"+idFileToCommit.toString());
+                OutputStream actualFileCreated = new FileOutputStream(tmpActualFile);
+                OutputStream lastCommitFileCreated = new FileOutputStream(tmpLastCommitFile);
         ){
-            lastCommitFileCreated.write(lastCommitFile.getFile());
-            actualFileCreated.write(actualFile.getFile());
+            actualFileCreated.write(actualFile);
+            actualFileCreated.close();
+            lastCommitFileCreated.write(lastCommitFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -123,12 +182,12 @@ public class DeltaService {
     }
 
     public List<Delta> getDeltaByCommit(Commit commit){
-        List<DeltaEntity> deltaEntities = deltaRepository.findAllByFormCommitEntity(commitDomainMapper.convertModelToEntity(commit));
+        List<DeltaEntity> deltaEntities = deltaRepository.findAllByFormCommitEntity(commitDomainMapper.convertModelToEntity(commit, 0));
         return deltaEntities.stream().map(deltaDomainMapper::convertEntityToModel).collect(Collectors.toList());
     }
 
     public void deleteDeltaByCommit(Commit commit){
         // delete on s3
-        deltaRepository.deleteAllByFormCommitEntity(commitDomainMapper.convertModelToEntity(commit));
+        deltaRepository.deleteAllByFormCommitEntity(commitDomainMapper.convertModelToEntity(commit, 0));
     }
 }

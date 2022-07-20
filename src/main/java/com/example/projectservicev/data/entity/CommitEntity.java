@@ -13,12 +13,11 @@ public class CommitEntity {
     private String name;
     @Temporal(TemporalType.DATE)
     private Date creationDate;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity parent;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity child;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "branch_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private BranchEntity branchEntity;
 
     public CommitEntity(Long id, String name, Date creationDate, CommitEntity parent, CommitEntity child, BranchEntity branchEntity) {

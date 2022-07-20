@@ -51,4 +51,14 @@ public class Branch {
     public Project getProject() {
         return project;
     }
+
+    @Override
+    public String toString() {
+        return "Branch{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", creationDate=" + creationDate +
+                ", project=" + project +
+                '}';
+    }
 }

@@ -1,10 +1,6 @@
 package com.example.projectservicev.domain.model;
 
-import com.example.projectservicev.data.entity.GroupEntity;
-
-import javax.persistence.ManyToOne;
 import java.util.Date;
-import java.util.Locale;
 
 public class Project {
 
@@ -12,14 +8,14 @@ public class Project {
     private String name;
     private Date creationDate;
     private boolean visibility;
-    private Group groupEntity;
+    private Group group;
 
-    public Project(Long id, String name, Date creationDate, boolean visibility, Group groupEntity) {
+    public Project(Long id, String name, Date creationDate, boolean visibility, Group group) {
         this.id = id;
         this.name = name;
         this.creationDate = creationDate;
         this.visibility = visibility;
-        this.groupEntity = groupEntity;
+        this.group = group;
     }
 
     public Project() {
@@ -37,12 +33,12 @@ public class Project {
         return creationDate;
     }
 
-    public boolean isVisibility() {
+    public boolean getVisibility() {
         return visibility;
     }
 
-    public Group getGroupEntity() {
-        return groupEntity;
+    public Group getGroup() {
+        return group;
     }
 
     public void setId(Long id) {
@@ -61,7 +57,7 @@ public class Project {
         this.visibility = visibility;
     }
 
-    public void setGroupEntity(Group groupEntity) {
-        this.groupEntity = groupEntity;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.projectservicev.controller;
 
+import com.example.projectservicev.data.repository.BranchRepository;
+import com.example.projectservicev.domain.model.Branch;
 import com.example.projectservicev.domain.model.Commit;
 import com.example.projectservicev.mapper.BranchMapper;
 import com.example.projectservicev.mapper.CommitMapper;
@@ -33,9 +35,9 @@ public class BranchController {
 
     @PostMapping("/{idBranch}/init")
     public void initBranch(@PathVariable("idBranch") Long idBranch, @RequestParam("files") MultipartFile[] files) throws IOException, URISyntaxException, InterruptedException {
-        System.out.println("controller");
-        System.out.println(files.length);
         branchMapper.initBranch(idBranch, files);
     }
+
+
 
 }

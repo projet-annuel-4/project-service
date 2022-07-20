@@ -9,6 +9,7 @@ import com.example.projectservicev.request.UpdateProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -25,7 +26,7 @@ public class ProjectService {
 
     public Project createProject(CreateProjectRequest request){
         ProjectEntity projectToSave = projectDomainMapper.convertCreateRequestToEntity(request);
-        //projectToSave.setId(UUID.randomUUID().toString());
+        projectToSave.setCreationDate(new Date());
         return projectDomainMapper.convertEntityToModel(projectRepository.save(projectToSave));
     }
 

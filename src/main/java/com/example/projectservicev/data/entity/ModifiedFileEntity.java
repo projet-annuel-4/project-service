@@ -11,14 +11,14 @@ public class ModifiedFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "modified_files_id_seq")
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private FileEntity fileEntity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private BranchEntity branchEntity;
     @Enumerated(EnumType.STRING)
     private ModifiedFileTypeEnum modificationType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity commitEntity;
 
 
@@ -73,5 +73,16 @@ public class ModifiedFileEntity {
 
     public void setCommitEntity(CommitEntity commitEntity) {
         this.commitEntity = commitEntity;
+    }
+
+    @Override
+    public String toString() {
+        return "ModifiedFileEntity{" +
+                "id=" + id +
+                ", fileEntity=" + fileEntity +
+                ", branchEntity=" + branchEntity +
+                ", modificationType=" + modificationType +
+                ", commitEntity=" + commitEntity +
+                '}';
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,7 @@ public class BranchService {
         com.example.projectservicev.domain.model.Branch newBranch = new com.example.projectservicev.domain.model.Branch();
         newBranch.setName("Main");
         newBranch.setProject(projectParent);
+        newBranch.setCreationDate(new Date());
         branchRepository.save(branchDomainMapper.convertModelToEntity(newBranch));
     }
 
@@ -61,7 +63,6 @@ public class BranchService {
     }
 
     public void initBranch(Long idBranch, MultipartFile[] files) throws IOException, URISyntaxException, InterruptedException {
-        System.out.println("service");
 
         Branch branch = getBranchById(idBranch);
         List<File> filesToSaves = new ArrayList<>();
@@ -74,8 +75,8 @@ public class BranchService {
             fileToSave.setName(file.getOriginalFilename());
             fileToSave.setUrl("none");
             fileToSave.setFile(file);
+            fileToSave.setDeleted(false);
             filesToSaves.add(fileToSave);
-            System.out.println("icici : " + fileToSave.getFile().getSize() + "\n");
         }
         List<File> fileSaved = fileService.addFilesToBranch( filesToSaves );
         List<File> fileSavedWithFile = setMultipartInSavedFiles(filesToSaves, fileSaved);
