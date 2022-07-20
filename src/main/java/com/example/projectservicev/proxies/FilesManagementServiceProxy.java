@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@FeignClient(name = "files-managment-service", url = "localhost:9140/api/v1/files", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "files-management-service", url = "localhost:9140/api/v1/files", configuration = FeignClientConfiguration.class)
 public interface FilesManagementServiceProxy {
 
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
