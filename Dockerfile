@@ -35,7 +35,7 @@ COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 #execute the application
-ENTRYPOINT ["java","-cp","app:app/lib/*","ProjectServiceApplication"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","fr/esgi/projectservice/ProjectServiceApplication"]
 
 # docker build -t project_service_test .  */
 # docker run -d -p 8500:8500 --network=host --name project_service project_service_test */
