@@ -25,4 +25,4 @@ spring:
       disableConnectionTracking: true
 
 target:
-  api: host.docker.internal:9140
+  file-service: ${TARGET_FILE_SERVICE:host.docker.internal:9140}
