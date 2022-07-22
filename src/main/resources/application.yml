@@ -62,3 +62,5 @@ logging:
     com.netflix: WARN
     org.springframework.web: WARN
     com.assignment: DEBUG
+target:
+  file-service: ${TARGET_FILE_SERVICE}
