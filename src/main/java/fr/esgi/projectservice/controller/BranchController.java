@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 @RestController
-@RequestMapping("/api/v1/branch")
+@RequestMapping("/api/v1/project/branch")
 public class BranchController {
 
     private final BranchMapper branchMapper;

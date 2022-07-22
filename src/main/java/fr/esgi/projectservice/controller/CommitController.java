@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/branch/{idBranch}/commit")
+@RequestMapping("/api/v1/project/branch/{idBranch}/commit")
 public class CommitController {
 
     private final CommitMapper commitMapper;
