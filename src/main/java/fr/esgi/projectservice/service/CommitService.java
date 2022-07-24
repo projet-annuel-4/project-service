@@ -53,7 +53,7 @@ public class CommitService {
         if (previousCommitOptional.isEmpty()) {
             previousCommit = null; // throw error;
         } else {
-            previousCommit = commitDomainMapper.convertEntityToModel(previousCommitOptional.get());
+            previousCommit = commitDomainMapper.convertEntityToModel(previousCommitOptional.get(),0);
         }
         Commit newCommit = new Commit();
         newCommit.setName(request.getName());
@@ -62,11 +62,11 @@ public class CommitService {
         newCommit.setBranch(branch);
         CommitEntity newCommitSavedEntity = commitRepository.save(commitDomainMapper.convertModelToEntity(newCommit, 0));
         if (previousCommit != null) {
-            previousCommit.setChild(commitDomainMapper.convertEntityToModel(newCommitSavedEntity));
+            previousCommit.setChild(commitDomainMapper.convertEntityToModel(newCommitSavedEntity,0));
             commitRepository.save(commitDomainMapper.convertModelToEntity(previousCommit, 0));
         }
 
-        Commit newCommitSaved = commitDomainMapper.convertEntityToModel(newCommitSavedEntity);
+        Commit newCommitSaved = commitDomainMapper.convertEntityToModel(newCommitSavedEntity,0);
 
         try {
             Files.createDirectory(Paths.get(branchId.toString()));
@@ -106,6 +106,7 @@ public class CommitService {
                 storageService.copyFileFromDirectoryToDirectory(modifiedFile.getFile(), "actual", "last");
                 continue;
             }
+            fileService.setLastCommitNameToFile(commit,modifiedFile.getFile().getId());
             filesToPatch.add(modifiedFile.getFile());
         }
         return filesToPatch;
@@ -143,7 +144,7 @@ public class CommitService {
 
     public List<Commit> getAllCommitFromBranch(Long idBranch) {
         List<CommitEntity> commitEntityEntities = commitRepository.findAllByBranchEntityId(idBranch);
-        return commitEntityEntities.stream().map(commitDomainMapper::convertEntityToModel).collect(Collectors.toList());
+        return commitDomainMapper.convertListEntitiesToListModels(commitEntityEntities);
     }
 
     public Commit getParentCommit(Long idCommit) {
@@ -151,7 +152,7 @@ public class CommitService {
         if (targetCommitOptional.isEmpty()) {
             throw new RuntimeException("notfound"); // throw error;
         }
-        return commitDomainMapper.convertEntityToModel(targetCommitOptional.get()).getParent();
+        return commitDomainMapper.convertEntityToModel(targetCommitOptional.get(),0).getParent();
     }
 
     public Commit getCommitById(Long commitId) {
@@ -159,7 +160,7 @@ public class CommitService {
         if (commitOptional.isEmpty()) {
             throw new RuntimeException("commit not found"); // throw error;
         }
-        return commitDomainMapper.convertEntityToModel(commitOptional.get());
+        return commitDomainMapper.convertEntityToModel(commitOptional.get(),0);
     }
 
     public Commit getChildCommit(Long idCommit) {
@@ -167,7 +168,7 @@ public class CommitService {
         if (targetCommitOptional.isEmpty()) {
             throw new RuntimeException("notfound"); // throw error;
         }
-        return commitDomainMapper.convertEntityToModel(targetCommitOptional.get()).getChild();
+        return commitDomainMapper.convertEntityToModel(targetCommitOptional.get(),0).getChild();
     }
 
     public List<Commit> getAllChild(Long idCommit) {
@@ -220,8 +221,8 @@ public class CommitService {
         deleteCommitByID(commit.getId());
     }
 
-    public void revertDeltas(Long idBranch, Commit commit, List<File> filesToCommit) throws IOException, URISyntaxException, InterruptedException {
-        for (File file : filesToCommit) {
+    public void revertDeltas(Long idBranch, Commit commit, List<File> fileToRevert) throws IOException, URISyntaxException, InterruptedException {
+        for (File file : fileToRevert) {
             deltaService.revertDelta(idBranch, commit, file);
         }
     }

@@ -7,8 +7,12 @@ import fr.esgi.projectservice.mapper.ProjectMapper;
 import fr.esgi.projectservice.request.CreateProjectRequest;
 import fr.esgi.projectservice.request.UpdateProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/project")
 public class ProjectController {
@@ -37,6 +41,11 @@ public class ProjectController {
     @PutMapping("/updateProject/{id}")
     public void updateProject(@RequestBody UpdateProjectRequest request, @PathVariable("id") Long id) {
         projectMapper.updateProject(request, id);
+    }
+
+    @GetMapping("/{groupId}/getProjects")
+    public ResponseEntity<List<Project>> getProjectByGroup(@PathVariable("groupId") Long groupId){
+        return ResponseEntity.ok(projectMapper.getProjectByGroup(groupId));
     }
 
 }

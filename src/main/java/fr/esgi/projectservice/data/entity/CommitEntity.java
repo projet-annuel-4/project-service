@@ -1,5 +1,7 @@
 package fr.esgi.projectservice.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,8 +15,10 @@ public class CommitEntity {
     private String name;
     @Temporal(TemporalType.DATE)
     private Date creationDate;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity parent;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity child;
     @ManyToOne(fetch = FetchType.LAZY)

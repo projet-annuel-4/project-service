@@ -30,7 +30,7 @@ public class ModifiedFilesDomainMapper {
         modifiedFile.setId(modifiedFileEntity.getId());
         modifiedFile.setFile(modifiedFileEntity.getFileEntity() == null ? null : fileDomainMapper.convertEntityToModel(modifiedFileEntity.getFileEntity()));
         modifiedFile.setBranch(modifiedFileEntity.getBranchEntity() == null ? null : branchDomainMapper.convertEntityToModel(modifiedFileEntity.getBranchEntity()));
-        modifiedFile.setAttachedCommit(modifiedFileEntity.getCommitEntity() == null ? null : commitDomainMapper.convertEntityToModel(modifiedFileEntity.getCommitEntity()));
+        modifiedFile.setAttachedCommit(modifiedFileEntity.getCommitEntity() == null ? null : commitDomainMapper.convertEntityToModel(modifiedFileEntity.getCommitEntity(),0));
         modifiedFile.setModificationType(modifiedFileEntity.getModificationType());
         return modifiedFile;
     }

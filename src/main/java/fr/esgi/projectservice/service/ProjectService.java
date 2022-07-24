@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -28,6 +30,11 @@ public class ProjectService {
         ProjectEntity projectToSave = projectDomainMapper.convertCreateRequestToEntity(request);
         projectToSave.setCreationDate(new Date());
         return projectDomainMapper.convertEntityToModel(projectRepository.save(projectToSave));
+    }
+
+    public List<Project> getProjectByGroupId(Long groupId){
+        List<ProjectEntity> projectEntities = projectRepository.getAllByGroupEntity_Id(groupId);
+        return projectEntities.stream().map(projectDomainMapper::convertEntityToModel).collect(Collectors.toList());
     }
 
     public void deleteProject(Long id) {

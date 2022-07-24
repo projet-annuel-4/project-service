@@ -7,7 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Component
 
@@ -26,12 +28,34 @@ public class CommitDomainMapper {
         return modelMapper.map(request, Commit.class);
     }
 
-    public Commit convertEntityToModel(CommitEntity commitEntity) {
-        return modelMapper.map(commitEntity, Commit.class);
+    public List<Commit> convertListEntitiesToListModels(List<CommitEntity> commitEntities){
+        List<Commit> commits = new ArrayList<>();
+        for (CommitEntity commitEntity : commitEntities){
+            commits.add(convertEntityToModel(commitEntity,0));
+        }
+        return commits;
+    }
+
+    public Commit convertEntityToModel(CommitEntity commitEntity, int loop) {
+        if (loop == 1) {
+            return null;
+        }
+        if (commitEntity == null) {
+            return null;
+        }
+        Commit commit = new Commit();
+        commit.setId(commitEntity.getId());
+        commit.setCreationDate(new Date());
+        commit.setBranch(branchDomainMapper.convertEntityToModel(commitEntity.getBranch()));
+        commit.setName(commitEntity.getName());
+        commit.setChild(commitEntity.getChild() == null ? null : convertEntityToModel(commitEntity.getChild(), loop + 1));
+        commit.setParent(commitEntity.getParent() == null ? null : convertEntityToModel(commitEntity.getParent(), loop + 1));
+
+        return commit;
     }
 
     public CommitEntity convertModelToEntity(Commit commit, int loop) {
-        if (loop == 2) {
+        if (loop == 1) {
             return null;
         }
         if (commit == null) {

@@ -136,6 +136,15 @@ public class StorageService {
         fileReverted.delete();
     }
 
+    public void saveFileRevertedForDiff(Long branchId, fr.esgi.projectservice.domain.model.File file, java.io.File fileReverted) throws IOException, URISyntaxException, InterruptedException {
+        UploadFileToServerRequest requestActual = buildRequestForFileObject(branchId, file, "actual");
+        UploadFileToServerRequest requestLast = buildRequestForFileObject(branchId, file, "last");
+        uploadFile(requestActual, fileReverted);
+        uploadFile(requestLast, fileReverted);
+
+        fileReverted.delete();
+    }
+
     public void saveDelta(Long branchId, Delta delta, java.io.File deltaFile) throws IOException, URISyntaxException, InterruptedException {
         UploadFileToServerRequest request = buildRequestForDeltaObject(branchId, delta, "patch");
         uploadFile(request, deltaFile);

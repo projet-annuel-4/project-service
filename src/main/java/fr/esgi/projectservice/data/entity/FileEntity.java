@@ -1,5 +1,7 @@
 package fr.esgi.projectservice.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,11 +14,14 @@ public class FileEntity {
     private String name;
     private boolean type;
     private String url;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private FileEntity parentDirectory;
     private String lastCommitName;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity commitEntityCreation;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private BranchEntity branchEntity;
     private boolean fromInit;

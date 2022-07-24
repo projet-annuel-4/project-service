@@ -1,7 +1,10 @@
 package fr.esgi.projectservice.controller;
 
+import fr.esgi.projectservice.domain.model.Commit;
 import fr.esgi.projectservice.domain.model.File;
 import fr.esgi.projectservice.mapper.FileMapper;
+import fr.esgi.projectservice.request.CreateFileRequest;
+import fr.esgi.projectservice.request.CreateProjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/branch/{idBranch}/file")
 public class FileController {
@@ -23,8 +29,8 @@ public class FileController {
     }
 
     @PostMapping("/create")
-    public void createFile(@PathVariable("idBranch") Long branchId, @RequestParam("file") MultipartFile fileToCreate) throws IOException, URISyntaxException, InterruptedException {
-        fileMapper.createFile(branchId, fileToCreate);
+    public ResponseEntity<File> createFile(@PathVariable("idBranch") Long branchId, @RequestBody CreateFileRequest request ) throws IOException, URISyntaxException, InterruptedException {
+        return ResponseEntity.ok(fileMapper.createFile(branchId, request));
     }
 
     @PostMapping("/{fileId}/save")
@@ -32,9 +38,28 @@ public class FileController {
         fileMapper.saveFile(idBranch, fileId, file);
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<File>> getAllFile(@PathVariable("idBranch") Long branchId) throws ChangeSetPersister.NotFoundException, IOException, URISyntaxException, InterruptedException {
+        return ResponseEntity.ok(fileMapper.getAllFileFromBranch(branchId));
+    }
+
     @GetMapping("/{fileId}/get")
+    public ResponseEntity<File> getFile(@PathVariable("fileId") Long fileId) throws ChangeSetPersister.NotFoundException, IOException, URISyntaxException, InterruptedException {
+        return ResponseEntity.ok(fileMapper.getFileById(fileId));
+    }
+    @GetMapping("/{fileId}/getFileData")
     public ResponseEntity<byte[]> getFile(@PathVariable("fileId") Long fileId, @RequestParam("type") String type) throws ChangeSetPersister.NotFoundException, IOException, URISyntaxException, InterruptedException {
         return ResponseEntity.ok(fileMapper.getFile(fileId, type));
+    }
+
+    @GetMapping("/{fileId}/getVersionsCommit")
+    public ResponseEntity<List<Commit>> getFileVersionsCommit(@PathVariable("fileId") Long fileId){
+        return ResponseEntity.ok(fileMapper.getFileVersionsCommit(fileId));
+    }
+
+    @GetMapping("{fileId}/getVersion/{commit}")
+    public ResponseEntity<byte[]> getFileVersion(@PathVariable("fileId") Long fileId, @PathVariable Long commitId) throws IOException, URISyntaxException, InterruptedException {
+        return ResponseEntity.ok(fileMapper.getFileVersion(fileId, commitId));
     }
 
     @DeleteMapping("/{fileId}/get")

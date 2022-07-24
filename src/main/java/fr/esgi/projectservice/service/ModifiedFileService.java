@@ -87,5 +87,10 @@ public class ModifiedFileService {
         return modifiedFileEntities.stream().map(modifiedFilesDomainMapper::convertEntityToModel).collect(Collectors.toList());
     }
 
+    public List<ModifiedFile> getAllModifiedFilesByFileId(Long fileId){
+        List<ModifiedFileEntity> modifiedFiles = modifiedFilesRepository.getAllByFileEntity_IdAndCommitEntityNotNull(fileId);
+        return modifiedFiles.stream().map(modifiedFilesDomainMapper::convertEntityToModel).collect(Collectors.toList());
+    }
+
     // getall where commit = null
 }

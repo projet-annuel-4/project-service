@@ -81,16 +81,16 @@ public class ProjectEntity {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProjectEntity that = (ProjectEntity) o;
-        return Objects.equals(groupEntity.getId(), that.groupEntity.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(groupEntity);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ProjectEntity that = (ProjectEntity) o;
+//        return Objects.equals(groupEntity.getId(), that.groupEntity.getId());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(groupEntity);
+//    }
 }

@@ -11,10 +11,14 @@ import org.springframework.stereotype.Component;
 public class FileDomainMapper {
 
     private final ModelMapper modelMapper;
+    private final CommitDomainMapper commitDomainMapper;
+    private final BranchDomainMapper branchDomainMapper;
 
     @Autowired
-    public FileDomainMapper(ModelMapper modelMapper) {
+    public FileDomainMapper(ModelMapper modelMapper, CommitDomainMapper commitDomainMapper, BranchDomainMapper branchDomainMapper) {
         this.modelMapper = modelMapper;
+        this.commitDomainMapper = commitDomainMapper;
+        this.branchDomainMapper = branchDomainMapper;
     }
 
     public File convertCreateRequestToModel(CreateProjectRequest request) {
@@ -22,7 +26,19 @@ public class FileDomainMapper {
     }
 
     public File convertEntityToModel(FileEntity fileEntity) {
-        return modelMapper.map(fileEntity, File.class);
+        File file = new File();
+        file.setId(fileEntity.getId());
+        file.setFile(null);
+        file.setCommitCreation(commitDomainMapper.convertEntityToModel(fileEntity.getCommitEntityCreation(),0));
+        file.setDeleted(fileEntity.isDeleted());
+        file.setBranch(branchDomainMapper.convertEntityToModel(fileEntity.getBranchEntity()));
+        file.setFromInit(fileEntity.isFromInit());
+        file.setLastCommitName(fileEntity.getLastCommitName());
+        file.setName(fileEntity.getName());
+        file.setParentDirectory(null);
+        file.setType(false);
+        file.setUrl(null);
+        return file;
     }
 
     public FileEntity convertModelToEntity(File file) {

@@ -4,6 +4,8 @@ server:
 target:
   api: host.docker.internal:9140
 
+hostname: ${HOSTNAME:host.docker.internal:4200}
+
 spring:
   application:
     name: project-service

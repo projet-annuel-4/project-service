@@ -23,4 +23,6 @@ public interface ModifiedFilesRepository extends JpaRepository<ModifiedFileEntit
     List<ModifiedFileEntity> getAllByCommitEntity_Id(Long commitId);
 
     ModifiedFileEntity getByFileEntity_IdAndAndCommitEntityIsNull(Long fileId);
+
+    List<ModifiedFileEntity> getAllByFileEntity_IdAndCommitEntityNotNull(Long fileId);
 }

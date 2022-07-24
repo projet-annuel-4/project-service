@@ -32,6 +32,7 @@ import java.nio.channels.Pipe;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/branch/{idBranch}/commit")
 public class CommitController {
@@ -53,7 +54,6 @@ public class CommitController {
     public void createCommit(@RequestBody CreateCommitRequest request,
                              @PathVariable("idBranch") Long idBranch) throws IOException, URISyntaxException, InterruptedException {
         commitMapper.createCommit(idBranch, request);
-
     }
 
     @GetMapping("/getAllCommit")

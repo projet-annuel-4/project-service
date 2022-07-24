@@ -7,6 +7,8 @@ import fr.esgi.projectservice.service.ProjectService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProjectMapper {
 
@@ -20,6 +22,10 @@ public class ProjectMapper {
 
     public Project createProject(CreateProjectRequest request) {
         return projectService.createProject(request);
+    }
+
+    public List<Project> getProjectByGroup(Long groupId){
+        return projectService.getProjectByGroupId(groupId);
     }
 
     public void deleteProject(Long id) {

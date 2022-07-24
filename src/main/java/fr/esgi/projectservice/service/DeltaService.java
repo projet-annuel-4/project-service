@@ -65,6 +65,28 @@ public class DeltaService {
         // get patch file and send it to server with delta id + delete directory
     }
 
+    public java.io.File revertDeltaForDiff(Long idBranch, List<Commit> commits, File fileToRevert) throws IOException, URISyntaxException, InterruptedException {
+
+        System.out.println("REVERTDELTAFORDIFF");
+        String directoryPath = "/showDiff/" + idBranch.toString() + "/";
+        java.io.File tmpDir = new java.io.File(directoryPath);
+        if (!tmpDir.mkdir()) {
+            throw new RuntimeException("unable to create dir");
+        }
+
+        setFileToShowDiffDir(directoryPath, fileToRevert.getId());
+        java.io.File fileReverted = null;
+        for (Commit commitToRevertForDiff : commits){
+            Delta deltaToRevert = getDeltaByFileIdAndCommitId(fileToRevert.getId(), commitToRevertForDiff.getId());
+            System.out.println("delta : " + deltaToRevert);
+
+            fileReverted = revertPatchForDiff(directoryPath, fileToRevert.getId(), deltaToRevert.getId());
+
+        }
+        tmpDir.delete();
+        return fileReverted;
+    }
+
     public void setupFilesToProcessDirectoryRevert(String directoryPath, Long fileToCommitId, Long patchToRevertId) throws IOException, URISyntaxException, InterruptedException {
         // create paths
         byte[] actualFile = storageService.getFileOnServerTest(fileToCommitId, "actual");
@@ -87,6 +109,34 @@ public class DeltaService {
         }
     }
 
+    public void setFileToShowDiffDir(String directoryPath, Long fileToCommitId) throws IOException, URISyntaxException, InterruptedException {
+        byte[] actualFile = storageService.getFileOnServerTest(fileToCommitId, "actual");
+
+        java.io.File tmpActualFile = new java.io.File(directoryPath + "diff_" + fileToCommitId.toString() + ".txt");
+
+        try (
+                OutputStream actualFileCreated = new FileOutputStream(tmpActualFile);
+        ) {
+            actualFileCreated.write(actualFile);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setDeltaToShowDiffDir(String directoryPath, Long patchToRevertId) throws IOException, URISyntaxException, InterruptedException {
+        byte[] patchFile = storageService.getFileOnServerTest(patchToRevertId, "patch");
+        System.out.println("size patchFile : " + patchFile.length);
+        java.io.File tmpPatchFile = new java.io.File(directoryPath + "patch_" + patchToRevertId.toString() + ".patch");
+
+
+        try (
+                OutputStream patchFileCreated = new FileOutputStream(tmpPatchFile);
+        ) {
+            patchFileCreated.write(patchFile);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public java.io.File revertPatch(String directoryPath, Long fileToCommitId, Long deltaId) throws IOException, URISyntaxException, InterruptedException {
         // get last_commit file and actual file
 
@@ -108,6 +158,36 @@ public class DeltaService {
             throw new RuntimeException(" UNABLE TO PATCH FILE ");
         }
         System.out.println("//// PROCESS END ////");
+        java.io.File actualFile = new java.io.File(directoryPath + "actual_" + fileToCommitId + ".txt");
+        java.io.File patchFile = new java.io.File(directoryPath + "patch_" + deltaId + ".patch");
+        //TODO delete patch on server
+        patchFile.delete();
+
+        return actualFile;
+    }
+
+    public java.io.File revertPatchForDiff(String directoryPath, Long fileToCommitId, Long deltaId) throws IOException, URISyntaxException, InterruptedException {
+        // get last_commit file and actual file
+        System.out.println("revertPatchForDiff");
+
+        setDeltaToShowDiffDir(directoryPath, deltaId);
+        //TODO add extension in file to build file here
+        System.out.println("//// PROCESS  DIFF RESULT ////");
+        try {
+            Process process1 = Runtime.getRuntime()
+                    .exec("dos2unix " + directoryPath + "diff_" + fileToCommitId + ".txt ");
+            Process process = Runtime.getRuntime()
+                    .exec("patch -R " + directoryPath + "diff_" + fileToCommitId + ".txt " + directoryPath + "patch_" + deltaId + ".patch");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = "";
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(" UNABLE TO PATCH FILE ");
+        }
+        System.out.println("//// PROCESS DIFF END ////");
         java.io.File actualFile = new java.io.File(directoryPath + "actual_" + fileToCommitId + ".txt");
         java.io.File patchFile = new java.io.File(directoryPath + "patch_" + deltaId + ".patch");
         //TODO delete patch on server
