@@ -20,6 +20,7 @@ public class ProjectController {
     private final ProjectMapper projectMapper;
     private final BranchMapper branchMapper;
 
+
     @Autowired
     public ProjectController(ProjectMapper projectMapper, BranchMapper branchMapper) {
         this.projectMapper = projectMapper;
@@ -28,7 +29,6 @@ public class ProjectController {
 
     @PostMapping("/createProject")
     public void createProject(@RequestBody CreateProjectRequest request) {
-        request.setGroupEntity(new GroupEntity(1L));
         Project projectCreated = projectMapper.createProject(request);
         branchMapper.createBranch(projectCreated.getId());
     }

@@ -9,7 +9,7 @@ eureka:
     serviceUrl:
       defaultZone: ${DISCOVERY_URL:http://localhost:8761}/eureka
 
-hostname: ${HOSTNAME:host.docker.internal:4200}
+#hostname: ${HOSTNAME:host.docker.internal:4200}
 
 spring:
   application:

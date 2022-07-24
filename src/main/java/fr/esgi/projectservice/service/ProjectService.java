@@ -24,18 +24,24 @@ public class ProjectService {
     private final ProjectDomainMapper projectDomainMapper;
     private final CreatedProjectProducer createdProjectProducer;
     private final DeletedProjectProducer deletedProjectProducer;
+    private final GroupService groupService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, ProjectDomainMapper projectDomainMapper, CreatedProjectProducer createdProjectProducer, DeletedProjectProducer deletedProjectProducer) {
+    public ProjectService(ProjectRepository projectRepository, ProjectDomainMapper projectDomainMapper, CreatedProjectProducer createdProjectProducer, DeletedProjectProducer deletedProjectProducer, GroupService groupService) {
         this.projectRepository = projectRepository;
         this.projectDomainMapper = projectDomainMapper;
         this.createdProjectProducer = createdProjectProducer;
         this.deletedProjectProducer = deletedProjectProducer;
+        this.groupService = groupService;
     }
 
     public Project createProject(CreateProjectRequest request) {
-        var projectToSave = projectDomainMapper.convertCreateRequestToEntity(request);
+
+        ProjectEntity projectToSave = new ProjectEntity();
+        projectToSave.setName(request.getName());
+        projectToSave.setVisibility(request.isVisibility());
         projectToSave.setCreationDate(new Date());
+        projectToSave.setGroupEntity(groupService.findGroupById(request.getGroupEntity()));
         projectRepository.saveAndFlush(projectToSave);
         var project = projectDomainMapper.convertEntityToModel(projectToSave);
         createdProjectProducer.projectCreated(project);

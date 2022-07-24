@@ -15,14 +15,14 @@ public class FileEntity {
     private boolean type;
     private String url;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FileEntity parentDirectory;
     private String lastCommitName;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CommitEntity commitEntityCreation;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private BranchEntity branchEntity;
     private boolean fromInit;
     private boolean deleted;

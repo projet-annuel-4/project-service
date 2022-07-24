@@ -8,12 +8,12 @@ public class CreateProjectRequest {
 
     private String name;
     private boolean visibility;
-    private GroupEntity groupEntity;
+    private Long groupId;
 
-    public CreateProjectRequest(String name, Locale creationDate, boolean visibility, GroupEntity groupEntity) {
+    public CreateProjectRequest(String name, Locale creationDate, boolean visibility, Long groupEntity) {
         this.name = name;
         this.visibility = visibility;
-        this.groupEntity = groupEntity;
+        this.groupId = groupEntity;
     }
 
     public void setName(String name) {
@@ -24,8 +24,8 @@ public class CreateProjectRequest {
         this.visibility = visibility;
     }
 
-    public void setGroupEntity(GroupEntity groupEntity) {
-        this.groupEntity = groupEntity;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public String getName() {
@@ -36,7 +36,7 @@ public class CreateProjectRequest {
         return visibility;
     }
 
-    public GroupEntity getGroupEntity() {
-        return groupEntity;
+    public Long getGroupEntity() {
+        return groupId;
     }
 }

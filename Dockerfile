@@ -28,11 +28,7 @@
 #RUN mkdir "tmpFilesConvert"
 #RUN mkdir "tmpDelta"
 #
-##Copy unpackaged application to new container
-#ARG DEPENDENCY=/target/dependency
-#COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-#COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-#COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
 #
 ##execute the application
 #ENTRYPOINT ["java","-cp","app:app/lib/*","fr/esgi/projectservice/ProjectServiceApplication"]
@@ -59,8 +55,11 @@ RUN mkdir "tmpDelta"
 RUN mkdir "generateFile"
 RUN mkdir "showDiff"
 
-#COPY . .
-COPY --from=build /home/app/target/*.jar /usr/local/lib/build.jar
+#Copy unpackaged application to new container
+ARG DEPENDENCY=/target/dependency
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 EXPOSE 8500
 
 # docker build -t project_service_test .  */

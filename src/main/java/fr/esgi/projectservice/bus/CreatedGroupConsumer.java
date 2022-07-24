@@ -1,6 +1,7 @@
 package fr.esgi.projectservice.bus;
 
 import fr.esgi.projectservice.dto.GroupEvent;
+import fr.esgi.projectservice.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.IntegrationMessageHeaderAccessor;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
 @Component("createdGroupConsumer")
 public class CreatedGroupConsumer implements Consumer<Message<GroupEvent>> {
 
-   // private final GroupService groupService;
+   private final GroupService groupService;
 
     @Override
     public void accept(Message<GroupEvent> message) {
@@ -30,7 +31,7 @@ public class CreatedGroupConsumer implements Consumer<Message<GroupEvent>> {
                 messageHeaders.get(KafkaHeaders.RECEIVED_PARTITION_ID, Integer.class),
                 messageHeaders.get(KafkaHeaders.OFFSET, Long.class),
                 messageHeaders.get(IntegrationMessageHeaderAccessor.DELIVERY_ATTEMPT, AtomicInteger.class));
-        //var group = groupService.createUser(groupEvent);
+        groupService.createGroup(groupEvent);
         log.info("Group with id {} saved.", groupEvent.getId());
     }
 }

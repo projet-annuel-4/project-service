@@ -27,6 +27,7 @@ public class GroupDomainMapper {
         }
         Group group = new Group();
         group.setId(groupEntity.getId());
+        group.setName(groupEntity.getName());
         return group;
     }
 
@@ -36,6 +37,7 @@ public class GroupDomainMapper {
         }
         GroupEntity groupEntity = new GroupEntity();
         groupEntity.setId(group.getId());
+        groupEntity.setName(group.getName());
         return groupEntity;
     }
 }
