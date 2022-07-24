@@ -15,12 +15,15 @@ spring:
   cloud:
     stream:
       function:
-        definition: createdGroupConsumer
+        definition: createdUserConsumer;createdGroupConsumer
       kafka:
         binder:
           brokers: ${KAFKA_URL}
           replicationFactor: 1
       bindings:
+        createdUserConsumer-in-0:
+          destination: "user-created"
+          content-type: application/json
         createdProjectProducer-out-0:
           destination: "project-created"
           content-type: application/json
