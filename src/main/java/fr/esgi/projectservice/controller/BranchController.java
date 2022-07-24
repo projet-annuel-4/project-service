@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/api/v1/branch")
+@RequestMapping("/api/v1/project/branch")
 public class BranchController {
 
     private final BranchMapper branchMapper;

@@ -34,7 +34,7 @@ public class StorageService {
 //    private final String downloadEndpoint = "api/v1/files/";
 //    private final String uploadEndpoint =
 
-    @Value("${target.api}")
+    @Value("${target.file-service}")
     private String uploadEndpoint;
 
     public void copyFileFromDirectoryToDirectory(fr.esgi.projectservice.domain.model.File file, String directorySrc, String directoryTarget) throws IOException, URISyntaxException, InterruptedException {

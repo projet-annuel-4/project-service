@@ -34,7 +34,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/api/v1/branch/{idBranch}/commit")
+@RequestMapping("/api/v1/project/branch/{idBranch}/commit")
 public class CommitController {
 
     private final CommitMapper commitMapper;

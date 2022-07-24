@@ -14,7 +14,7 @@ spring:
     password:
     driverClassName: org.h2.Driver
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: true
     hibernate:
       ddl-auto: create
@@ -25,4 +25,4 @@ spring:
       disableConnectionTracking: true
 
 target:
-  api: host.docker.internal:9140
+  file-service: ${TARGET_FILE_SERVICE:host.docker.internal:9140}

@@ -18,7 +18,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/api/v1/branch/{idBranch}/file")
+@RequestMapping("/api/v1/project/branch/{idBranch}/file")
 public class FileController {
 
     FileMapper fileMapper;

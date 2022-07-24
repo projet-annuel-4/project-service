@@ -1,21 +1,53 @@
 server:
-  port: 8500
-
-target:
-  api: host.docker.internal:9140
+  port: ${PORT:8500}
+hostname: ${HOSTNAME:localhost:8500}
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: ${DISCOVERY_URL:http://localhost:8761}/eureka
 
 hostname: ${HOSTNAME:host.docker.internal:4200}
 
 spring:
   application:
     name: project-service
+  cloud:
+    stream:
+      function:
+        definition: createdUserConsumer;createdGroupConsumer
+      kafka:
+        binder:
+          brokers: ${KAFKA_URL}
+          replicationFactor: 1
+      bindings:
+        createdUserConsumer-in-0:
+          destination: "user-created"
+          content-type: application/json
+        createdProjectProducer-out-0:
+          destination: "project-created"
+          content-type: application/json
+        deletedProjectProducer-out-0:
+          destination: "project-deleted"
+          content-type: application/json
+        createdGroupConsumer-in-0:
+          destination: "group-created"
+          content-type: application/json
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 5MB
+      file-size-threshold: 2MB
+      enabled: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: admin
-    url: jdbc:postgresql://host.docker.internal:5432/project-service
+    username: ${BDD_USERNAME}
+    password: ${BDD_PASSWORD}
+    url: jdbc:postgresql://${BDD_URL}?useSSL=false
   jpa:
-    database-platform : org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     hibernate:
       ddl-auto: update
@@ -24,3 +56,17 @@ spring:
       use_sql_comments: false
       type: all
       disableConnectionTracking: true
+
+jwt:
+  header: Authorization
+  secret:  ${JWT_SECRET}
+  expiration: 86400
+
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    com.assignment: DEBUG
+
+target:
+  file-service: ${TARGET_FILE_SERVICE}
