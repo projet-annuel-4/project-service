@@ -57,6 +57,7 @@ RUN apt-get -y install dos2unix
 RUN mkdir "tmpFilesConvert"
 RUN mkdir "tmpDelta"
 RUN mkdir "generateFile"
+RUN mkdir "showDiff"
 
 #COPY . .
 COPY --from=build /home/app/target/*.jar /usr/local/lib/build.jar

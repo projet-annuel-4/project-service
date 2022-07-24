@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class CommitService {
@@ -50,16 +47,19 @@ public class CommitService {
         Branch branch = branchService.getBranchById(branchId);
         Optional<CommitEntity> previousCommitOptional = commitRepository.findByBranchEntityAndChildIsNull(branchDomainMapper.convertModelToEntity(branch));
         Commit previousCommit;
+        int order = 0;
         if (previousCommitOptional.isEmpty()) {
             previousCommit = null; // throw error;
         } else {
             previousCommit = commitDomainMapper.convertEntityToModel(previousCommitOptional.get(),0);
+            order = previousCommit.getOrder() + 1;
         }
         Commit newCommit = new Commit();
         newCommit.setName(request.getName());
         newCommit.setCreationDate(DateTimeUtils.getDateNow());
         newCommit.setParent(previousCommit);
         newCommit.setBranch(branch);
+        newCommit.setOrder(order);
         CommitEntity newCommitSavedEntity = commitRepository.save(commitDomainMapper.convertModelToEntity(newCommit, 0));
         if (previousCommit != null) {
             previousCommit.setChild(commitDomainMapper.convertEntityToModel(newCommitSavedEntity,0));
@@ -181,7 +181,8 @@ public class CommitService {
             }
             commitChildrens.add(commitChild);
             idCommit = commitChild.getId();
-        } while (commitChild.getChild() != null);
+        } while (true);
+
         return commitChildrens;
     }
 
@@ -204,11 +205,11 @@ public class CommitService {
 
     public void revertToCommit(Long branchId, Long commitId) throws IOException, URISyntaxException, InterruptedException {
         //TODO set last file to actual and delete modified file with commit null
-        //TODO first revert work / second no check why !
         Commit commit = getCommitById(commitId);
         List<Commit> commitChilds = getAllChild(commitId);
-        System.out.println("childs : " + commitChilds.size());
+        commitChilds = sortCommitByOrderDesc(commitChilds);
         for (Commit child : commitChilds) {
+            System.out.println("JE COMMENCE AVEC LE COMMIT : " + child.getId());
             List<ModifiedFile> commitModifications = modifiedFileService.getAllModifiedFilesByCommit(child);
             List<File> filesToRevert = extractFilesToRevert(commitModifications, child);
             revertDeltas(branchId, child, filesToRevert);
@@ -219,6 +220,23 @@ public class CommitService {
         System.out.println("filesToRevert : " + filesToRevert.size());
         revertDeltas(branchId, commit, filesToRevert);
         deleteCommitByID(commit.getId());
+    }
+
+    public List<Commit> sortCommitByOrderDesc(List<Commit> commits){
+        int n = commits.size();
+
+        for (int i = 0; i < n-1; i++)
+        {
+            int min_idx = i;
+            for (int j = i+1; j < n; j++)
+                if (commits.get(j).getOrder() > commits.get(min_idx).getOrder())
+                    min_idx = j;
+            Commit temp = commits.get(min_idx);
+            commits.set(min_idx, commits.get(i));
+            commits.set(i, temp);
+        }
+
+        return commits;
     }
 
     public void revertDeltas(Long idBranch, Commit commit, List<File> fileToRevert) throws IOException, URISyntaxException, InterruptedException {

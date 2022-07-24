@@ -37,7 +37,7 @@ public class CommitDomainMapper {
     }
 
     public Commit convertEntityToModel(CommitEntity commitEntity, int loop) {
-        if (loop == 1) {
+        if (loop == 2) {
             return null;
         }
         if (commitEntity == null) {
@@ -48,6 +48,7 @@ public class CommitDomainMapper {
         commit.setCreationDate(new Date());
         commit.setBranch(branchDomainMapper.convertEntityToModel(commitEntity.getBranch()));
         commit.setName(commitEntity.getName());
+        commit.setOrder(commitEntity.getOrder());
         commit.setChild(commitEntity.getChild() == null ? null : convertEntityToModel(commitEntity.getChild(), loop + 1));
         commit.setParent(commitEntity.getParent() == null ? null : convertEntityToModel(commitEntity.getParent(), loop + 1));
 
@@ -55,7 +56,7 @@ public class CommitDomainMapper {
     }
 
     public CommitEntity convertModelToEntity(Commit commit, int loop) {
-        if (loop == 1) {
+        if (loop == 2) {
             return null;
         }
         if (commit == null) {
@@ -66,6 +67,7 @@ public class CommitDomainMapper {
         commitEntity.setCreationDate(new Date());
         commitEntity.setBranch(branchDomainMapper.convertModelToEntity(commit.getBranch()));
         commitEntity.setName(commit.getName());
+        commitEntity.setOrder(commit.getOrder());
         commitEntity.setChild(commit.getChild() == null ? null : convertModelToEntity(commit.getChild(), loop + 1));
         commitEntity.setParent(commit.getParent() == null ? null : convertModelToEntity(commit.getParent(), loop + 1));
 

@@ -13,28 +13,39 @@ public class CommitEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "commit_id_seq")
     private Long id;
     private String name;
+    private Integer order_commit;
     @Temporal(TemporalType.DATE)
     private Date creationDate;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity parent;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private CommitEntity child;
     @ManyToOne(fetch = FetchType.LAZY)
     private BranchEntity branchEntity;
 
-    public CommitEntity(Long id, String name, Date creationDate, CommitEntity parent, CommitEntity child, BranchEntity branchEntity) {
+
+    public CommitEntity(Long id, String name, Date creationDate, CommitEntity parent, CommitEntity child, BranchEntity branchEntity, Integer order_commit) {
         this.id = id;
         this.name = name;
         this.creationDate = creationDate;
         this.parent = parent;
         this.child = child;
         this.branchEntity = branchEntity;
+        this.order_commit = order_commit;
     }
 
     public CommitEntity() {
 
+    }
+
+    public Integer getOrder() {
+        return order_commit;
+    }
+
+    public void setOrder(Integer order) {
+        this.order_commit = order;
     }
 
     public void setId(Long id) {

@@ -57,8 +57,8 @@ public class FileController {
         return ResponseEntity.ok(fileMapper.getFileVersionsCommit(fileId));
     }
 
-    @GetMapping("{fileId}/getVersion/{commit}")
-    public ResponseEntity<byte[]> getFileVersion(@PathVariable("fileId") Long fileId, @PathVariable Long commitId) throws IOException, URISyntaxException, InterruptedException {
+    @GetMapping("{fileId}/getVersion/{commitId}")
+    public ResponseEntity<byte[]> getFileVersion(@PathVariable("fileId") Long fileId, @PathVariable("commitId") Long commitId) throws IOException, URISyntaxException, InterruptedException {
         return ResponseEntity.ok(fileMapper.getFileVersion(fileId, commitId));
     }
 

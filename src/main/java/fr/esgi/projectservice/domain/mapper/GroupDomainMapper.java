@@ -31,6 +31,11 @@ public class GroupDomainMapper {
     }
 
     public GroupEntity convertModelToEntity(Group group) {
-        return modelMapper.map(group, GroupEntity.class);
+        if (group == null) {
+            return null;
+        }
+        GroupEntity groupEntity = new GroupEntity();
+        groupEntity.setId(group.getId());
+        return groupEntity;
     }
 }

@@ -21,10 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,7 +37,7 @@ public class FileService {
     private final DeltaService deltaService;
 
     @Autowired
-    public FileService(FileRepository fileRepository, FileDomainMapper fileDomainMapper, CommitDomainMapper commitDomainMapper, ModifiedFileService modifiedFileService, @Lazy BranchService branchService, StorageService storageService, CommitService commitService, DeltaService deltaService) {
+    public FileService(FileRepository fileRepository, FileDomainMapper fileDomainMapper, CommitDomainMapper commitDomainMapper, ModifiedFileService modifiedFileService, @Lazy BranchService branchService, StorageService storageService,@Lazy CommitService commitService,@Lazy DeltaService deltaService) {
         this.fileRepository = fileRepository;
         this.fileDomainMapper = fileDomainMapper;
         this.commitDomainMapper = commitDomainMapper;
@@ -244,24 +241,28 @@ public class FileService {
     public byte[] getFileVersion(Long fileId, Long commitId) throws IOException, URISyntaxException, InterruptedException {
         File file = getFileById(fileId);
         List<Commit> fileLinkedCommit = getFileVersionsCommit(fileId);
+        System.out.println("fileLinkedCommit size : " + fileLinkedCommit.size());
         List<Commit> commitChild = commitService.getAllChild(commitId);
+        System.out.println("commitChild size : " + commitChild.size());
+
         List<Commit> commitToRevert = new ArrayList<>();
+        commitToRevert.add(commitService.getCommitById(commitId));
         for (Commit child : commitChild){
+            System.out.println("commit child : " + child.getId());
             for (Commit linkedCommit : fileLinkedCommit){
                 if(Objects.equals(child.getId(), linkedCommit.getId())){
+                    System.out.println("j'ai add le commit : " + child.getId());
                     commitToRevert.add(child);
                 }
             }
         }
+        commitToRevert = commitService.sortCommitByOrderDesc(commitToRevert);
         return processRevertFile(file, commitToRevert);
     }
 
     public byte[] processRevertFile(File file, List<Commit> commits) throws IOException, URISyntaxException, InterruptedException {
         System.out.println("processRevertFile");
-        java.io.File fileReverted = deltaService.revertDeltaForDiff(file.getBranch().getId(), commits, file);
-
-        return Files.readAllBytes(Paths.get(fileReverted.getAbsolutePath()));
-
+        return deltaService.revertDeltaForDiff(file.getBranch().getId(), commits, file);
     }
 
 

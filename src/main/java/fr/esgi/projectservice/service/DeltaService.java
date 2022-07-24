@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,7 +67,7 @@ public class DeltaService {
         // get patch file and send it to server with delta id + delete directory
     }
 
-    public java.io.File revertDeltaForDiff(Long idBranch, List<Commit> commits, File fileToRevert) throws IOException, URISyntaxException, InterruptedException {
+    public byte[] revertDeltaForDiff(Long idBranch, List<Commit> commits, File fileToRevert) throws IOException, URISyntaxException, InterruptedException {
 
         System.out.println("REVERTDELTAFORDIFF");
         String directoryPath = "/showDiff/" + idBranch.toString() + "/";
@@ -76,15 +78,20 @@ public class DeltaService {
 
         setFileToShowDiffDir(directoryPath, fileToRevert.getId());
         java.io.File fileReverted = null;
+        System.out.println(" ///// SIZE //// : " + commits.size());
         for (Commit commitToRevertForDiff : commits){
+            System.out.println("je commence avec le commit  : " + commitToRevertForDiff.getId());
             Delta deltaToRevert = getDeltaByFileIdAndCommitId(fileToRevert.getId(), commitToRevertForDiff.getId());
-            System.out.println("delta : " + deltaToRevert);
+
 
             fileReverted = revertPatchForDiff(directoryPath, fileToRevert.getId(), deltaToRevert.getId());
 
         }
-        tmpDir.delete();
-        return fileReverted;
+        byte[] fileRevertedToByte = Files.readAllBytes(Paths.get(fileReverted.getAbsolutePath()));
+        System.out.println("j'ai supp le fichier : " + fileReverted.delete());
+        System.out.println("j'ai supp le dir : " + tmpDir.delete());
+
+        return fileRevertedToByte;
     }
 
     public void setupFilesToProcessDirectoryRevert(String directoryPath, Long fileToCommitId, Long patchToRevertId) throws IOException, URISyntaxException, InterruptedException {
@@ -188,7 +195,7 @@ public class DeltaService {
             throw new RuntimeException(" UNABLE TO PATCH FILE ");
         }
         System.out.println("//// PROCESS DIFF END ////");
-        java.io.File actualFile = new java.io.File(directoryPath + "actual_" + fileToCommitId + ".txt");
+        java.io.File actualFile = new java.io.File(directoryPath + "diff_" + fileToCommitId + ".txt");
         java.io.File patchFile = new java.io.File(directoryPath + "patch_" + deltaId + ".patch");
         //TODO delete patch on server
         patchFile.delete();

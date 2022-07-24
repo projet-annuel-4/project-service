@@ -2,17 +2,40 @@ package fr.esgi.projectservice.domain.model;
 
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Commit {
 
     private Long id;
     private String name;
+    private Integer order;
     private Date creationDate;
     private Commit parent;
     private Commit child;
     private Branch branch;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Commit)) return false;
+        Commit commit = (Commit) o;
+        return getId().equals(commit.getId()) && getName().equals(commit.getName()) && getOrder().equals(commit.getOrder()) && getCreationDate().equals(commit.getCreationDate()) && getParent().equals(commit.getParent()) && getChild().equals(commit.getChild()) && getBranch().equals(commit.getBranch());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getOrder(), getCreationDate(), getParent(), getChild(), getBranch());
+    }
+
     public Commit() {
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public void setId(Long id) {
