@@ -15,7 +15,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
     ProjectEntity findProjectEntitiesById(Long id);
 
-    List<ProjectEntity> getAllByGroupEntity_Id(Long groupId);
+    List<ProjectEntity> getAllByGroupEntity_IdAndDeletedFalse(Long groupId);
 
     @Query("select r from ProjectEntity r join fetch r.groupEntity where r.id = ?1")
     Optional<ProjectEntity> findByIdWithGroup(Long id);

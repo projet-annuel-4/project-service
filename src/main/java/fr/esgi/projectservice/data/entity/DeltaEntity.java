@@ -10,9 +10,9 @@ public class DeltaEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "delta_id_seq")
     private Long id;
     private String patchUrl;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private FileEntity fileSrc;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity formCommitEntity;
 
     public DeltaEntity(Long id, String patchUrl, FileEntity fileSrc, CommitEntity formCommitEntity) {

@@ -1,7 +1,7 @@
 package fr.esgi.projectservice.service;
 
-import fr.esgi.projectservice.bus.CreatedProjectProducer;
-import fr.esgi.projectservice.bus.DeletedProjectProducer;
+//import fr.esgi.projectservice.bus.CreatedProjectProducer;
+//import fr.esgi.projectservice.bus.DeletedProjectProducer;
 import fr.esgi.projectservice.data.entity.ProjectEntity;
 import fr.esgi.projectservice.data.repository.ProjectRepository;
 import fr.esgi.projectservice.domain.mapper.ProjectDomainMapper;
@@ -22,16 +22,16 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectDomainMapper projectDomainMapper;
-    private final CreatedProjectProducer createdProjectProducer;
-    private final DeletedProjectProducer deletedProjectProducer;
+//    private final CreatedProjectProducer createdProjectProducer;
+//    private final DeletedProjectProducer deletedProjectProducer;
     private final GroupService groupService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, ProjectDomainMapper projectDomainMapper, CreatedProjectProducer createdProjectProducer, DeletedProjectProducer deletedProjectProducer, GroupService groupService) {
+    public ProjectService(ProjectRepository projectRepository, ProjectDomainMapper projectDomainMapper, GroupService groupService) {
         this.projectRepository = projectRepository;
         this.projectDomainMapper = projectDomainMapper;
-        this.createdProjectProducer = createdProjectProducer;
-        this.deletedProjectProducer = deletedProjectProducer;
+//        this.createdProjectProducer = createdProjectProducer;
+//        this.deletedProjectProducer = deletedProjectProducer;
         this.groupService = groupService;
     }
 
@@ -42,15 +42,16 @@ public class ProjectService {
         projectToSave.setVisibility(request.isVisibility());
         projectToSave.setCreationDate(new Date());
         projectToSave.setGroupEntity(groupService.findGroupById(request.getGroupEntity()));
+        projectToSave.setDeleted(false);
         projectRepository.saveAndFlush(projectToSave);
         var project = projectDomainMapper.convertEntityToModel(projectToSave);
-        createdProjectProducer.projectCreated(project);
+        //createdProjectProducer.projectCreated(project);
         return project;
     }
 
 
     public List<Project> getProjectByGroupId(Long groupId){
-        List<ProjectEntity> projectEntities = projectRepository.getAllByGroupEntity_Id(groupId);
+        List<ProjectEntity> projectEntities = projectRepository.getAllByGroupEntity_IdAndDeletedFalse(groupId);
         return projectEntities.stream().map(projectDomainMapper::convertEntityToModel).collect(Collectors.toList());
     }
 
@@ -58,8 +59,10 @@ public class ProjectService {
     @Transactional
     public void deleteProject(Long id) {
         var project = projectRepository.findById(id);
-        projectRepository.deleteById(id);
-        deletedProjectProducer.projectDeleted(projectDomainMapper.convertEntityToModel(project.get()));
+        ProjectEntity projectEntity = project.get();
+        projectEntity.setDeleted(true);
+        projectRepository.save(projectEntity);
+        //deletedProjectProducer.projectDeleted(projectDomainMapper.convertEntityToModel(project.get()));
     }
 
     public void updateProject(UpdateProjectRequest request, Long id) {

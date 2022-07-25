@@ -2,7 +2,6 @@ package fr.esgi.projectservice.data.entity;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "project")
@@ -15,19 +14,29 @@ public class ProjectEntity {
     @Temporal(TemporalType.DATE)
     private Date creationDate;
     private boolean visibility;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private GroupEntity groupEntity;
+    private boolean deleted;
 
-    public ProjectEntity(Long id, String name, Date creationDate, boolean visibility, GroupEntity groupEntity) {
+    public ProjectEntity(Long id, String name, Date creationDate, boolean visibility, GroupEntity groupEntity, boolean deleted) {
         this.id = id;
         this.name = name;
         this.creationDate = creationDate;
         this.visibility = visibility;
         this.groupEntity = groupEntity;
+        this.deleted = deleted;
     }
 
     public ProjectEntity() {
 
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setGroupEntity(GroupEntity groupEntity) {

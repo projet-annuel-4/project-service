@@ -18,7 +18,7 @@ public class ModifiedFileEntity {
     @Enumerated(EnumType.STRING)
     private ModifiedFileTypeEnum modificationType;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommitEntity commitEntity;
 
 

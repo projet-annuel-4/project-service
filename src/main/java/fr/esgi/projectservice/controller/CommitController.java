@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import fr.esgi.projectservice.domain.model.Commit;
 import fr.esgi.projectservice.dto.UploadFileToServerRequest;
 import fr.esgi.projectservice.mapper.CommitMapper;
-import fr.esgi.projectservice.proxies.FilesManagementServiceProxy;
 import fr.esgi.projectservice.request.CreateCommitRequest;
 import fr.esgi.projectservice.service.DeltaService;
 import org.apache.commons.io.IOUtils;
@@ -39,15 +38,13 @@ public class CommitController {
 
     private final CommitMapper commitMapper;
     private final DeltaService deltaService;
-    private final FilesManagementServiceProxy filesManagementServiceProxy;
 
 
     @Autowired
-    public CommitController(CommitMapper commitMapper, DeltaService deltaService, FilesManagementServiceProxy filesManagementServiceProxy) {
+    public CommitController(CommitMapper commitMapper, DeltaService deltaService) {
         //  delta service for test
         this.commitMapper = commitMapper;
         this.deltaService = deltaService;
-        this.filesManagementServiceProxy = filesManagementServiceProxy;
     }
 
     @PostMapping("")
