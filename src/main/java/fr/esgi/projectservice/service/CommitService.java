@@ -188,8 +188,10 @@ public class CommitService {
 
     public void deleteCommitByID(Long commitId) {
         CommitEntity parentCommitEntity = commitRepository.findByChild_Id(commitId);
-        parentCommitEntity.setChild(null);
-        commitRepository.save(parentCommitEntity);
+        if (parentCommitEntity != null) {
+            parentCommitEntity.setChild(null);
+            commitRepository.save(parentCommitEntity);
+        }
         commitRepository.deleteById(commitId);
     }
 
