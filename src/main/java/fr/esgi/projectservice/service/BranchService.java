@@ -53,6 +53,11 @@ public class BranchService {
         branchRepository.save(branchDomainMapper.convertModelToEntity(newBranch));
     }
 
+    public Long getBranchIdByProjectId(Long projectId){
+        BranchEntity branchEntity = branchRepository.getAllByProjectEntity_Id(projectId);
+        return branchEntity.getId();
+    }
+
     public Branch getBranchById(Long idBranch) {
         Optional<BranchEntity> branchEntityOptional = branchRepository.findById(idBranch);
         if (branchEntityOptional.isEmpty()) {

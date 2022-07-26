@@ -25,6 +25,10 @@ public class BranchMapper {
         branchService.createBranch(id);
     }
 
+    public Long getBranchIdByProjectId(Long projectId){
+        return branchService.getBranchIdByProjectId(projectId);
+    }
+
     public void initBranch(Long idBranch, MultipartFile[] files) throws IOException, URISyntaxException, InterruptedException {
 
         branchService.initBranch(idBranch, files);

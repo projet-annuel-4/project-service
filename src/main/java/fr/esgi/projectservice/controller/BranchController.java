@@ -3,6 +3,7 @@ package fr.esgi.projectservice.controller;
 import fr.esgi.projectservice.mapper.BranchMapper;
 import fr.esgi.projectservice.mapper.CommitMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,11 @@ public class BranchController {
     @PostMapping("/{idBranch}/init")
     public void initBranch(@PathVariable("idBranch") Long idBranch, @RequestParam("files") MultipartFile[] files) throws IOException, URISyntaxException, InterruptedException {
         branchMapper.initBranch(idBranch, files);
+    }
+
+    @GetMapping("/{projectId}/getBranch")
+    public ResponseEntity<Long> getBranchIdByProject(@PathVariable("projectId") Long projectId) {
+        return ResponseEntity.ok(branchMapper.getBranchIdByProjectId(projectId));
     }
 
 
