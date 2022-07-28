@@ -9,8 +9,6 @@ import java.util.Set;
 public class GroupEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groups_id_seq")
-    @SequenceGenerator(name = "groups_id_seq", sequenceName = "groups_id_seq", initialValue = 1, allocationSize = 1)
     private Long id;
     private String name;
 
