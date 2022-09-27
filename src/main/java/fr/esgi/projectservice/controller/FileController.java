@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/project/branch/{idBranch}/file")
 public class FileController {

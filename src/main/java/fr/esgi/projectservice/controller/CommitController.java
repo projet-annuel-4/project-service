@@ -31,7 +31,6 @@ import java.nio.channels.Pipe;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/v1/project/branch/{idBranch}/commit")
 public class CommitController {
